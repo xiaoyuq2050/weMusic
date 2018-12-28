@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify Auth</title>
+</head>
+
+<body>
+<form action="{% url 'exchange_access_token' %}" method='POST'>
+
+    <button type='submit' class="btn btn-primary px-2">Access Token</button>
+    {% csrf_token %}
+</form>
+
+<iframe src="https://open.spotify.com/embed/track/1pbyc2rbpwxZjCbKC2X7UV" width="300" height="380" frameborder="0"
+        allowtransparency="true" allow="encrypted-media"></iframe>
+</body>

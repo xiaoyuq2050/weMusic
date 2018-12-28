@@ -1,0 +1,1 @@
+{"users":[{% for user in users %}{% include 'weMusic/unverified_member.json' %}{% if not forloop.last %}, {% endif %}{%  endfor %}]}

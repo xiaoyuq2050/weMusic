@@ -1,0 +1,3 @@
+{"room_songs":
+[{% for song in songs %}{% include 'weMusic/song.json' %}{% if not forloop.last %}, {% endif %}{%  endfor %}]
+}

@@ -1,0 +1,209 @@
+
+.player {
+    width: 375px;
+    height: 550px;
+    background: rgba(192, 192, 192, 0.5);
+    border-radius: 10px;
+    position: relative;
+}
+
+.header {
+    padding: 15px 0;
+    text-align: center;
+}
+
+#albumPic {
+    background-size: cover;
+    width: 270px;
+    height: 270px;
+    margin: auto;
+    margin: auto;
+}
+
+.trackInfo {
+    text-align: center;
+    padding: 20px 0 15px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+#songName {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#progress {
+    width: 0%;
+    height: 20%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(to bottom, grey, blue);
+    border-bottom-left-radius: 10px;
+    opacity: .4;
+}
+
+.controls {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.play {
+    cursor: pointer;
+    width: 75px;
+    height: 75px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    margin: auto;
+    display: flex;
+    /*align-items: center;*/
+    line-height: 65px;
+    justify-content: center;
+    color: #fff;
+    font-size: 35px;
+}
+
+.play:hover {
+    font-size: 40px;
+}
+
+.previous {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    font-size: 30px;
+    left: 60px;
+}
+
+.next {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    font-size: 30px;
+    right: 60px;
+}
+
+.time {
+    width: 335px;
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    padding: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#comment-screen {
+    z-index: 2;
+    position: absolute;
+    width: 375px;
+    height: 350px;
+    top: 0px;
+}
+
+.slidecontainer {
+    width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+    -webkit-appearance: none; /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 25px; /* Specified height */
+    background: #d3d3d3; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+    position: relative;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #3579F6; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #3579F6; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 375px;
+    height: 5px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #3579F6;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #3579F6;
+    cursor: pointer;
+}
+
+#playlist {
+    height: 500px;
+    overflow: auto;
+    /*list-style-type: none; margin: 0; padding: 0;*/
+}
+
+/*#playlist li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }*/
+#import_playlist {
+    height: 500px;
+    overflow: auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+    height: 0px;
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #3579F6;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #b30000;
+}

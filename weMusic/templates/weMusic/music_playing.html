@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Music Playing</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="/static/weMusic/open-iconic-master/font/css/open-iconic-bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/weMusic/welcome.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+
+    {% load static %}
+    <script src="{% static '/js/jquery.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/music_player.css' %}">
+    <script src="{% static '/js/left_panel.js' %}"></script>
+    <script src="{% static '/js/middle_panel.js' %}"></script>
+    <script src="{% static '/js/right_panel.js' %}"></script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script src="{% static '/js/utilities.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+</head>
+<body>
+
+<input type="hidden" id="room_key" value="{{ room_key }}">
+<input type="hidden" id="room_status" value="{{ room_status }}">
+<input type="hidden" id="access_token" value="{{ access_token }}">
+<input type="hidden" id="playing_song" value="{{ playing_song }}">
+<input type="hidden" id="room_playlist" value="{{ room_playlist }}">
+<input type="hidden" id="played_time" value="{{ played_time }}">
+
+<!--import playlist dialog modal-->
+<div class="modal fade" id="importPlaylist" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Where do you want to import?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% for playlist in playlists_info %}
+                <button id='playlist_btn' data='{{ playlist.1 }}'>{{ playlist.0 }}</button>
+                <button type="button" class="close" id='playlist_add' data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&plus;</span>
+                </button>
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--kick people dialog modal-->
+<div class="modal fade" id="kickPeople" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Who do you want to kick?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="all_members" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--verify private room new members dialog modal-->
+<div id="verify_private_members" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">These users want to enter room. Please approve or deny.</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="unverified_members" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row h-100">
+    <div id="login" class="col-sm-3 align-items-center d-flex justify-content-center">
+        <br>
+        <br>
+        <br>
+        Room : {{ room_key }}
+        <button class="btn btn-primary" data-toggle="modal" data-target="#importPlaylist">Import Playlist</button>
+        <br>
+        <div id = 'import_playlist'><ul class="list-group" id='song_list'></ul></div>
+        <br>
+        {% if owner %}
+        <button class="btn btn-primary" id="get-all-members" data-toggle="modal" data-target="#kickPeople">Kick member
+        </button>
+        {% if not room_status %}
+        <button class="btn btn-primary oi oi-people" id="get-all-unverified" data-toggle="modal"
+                data-target="#verify_private_members"></button>
+        {% endif %}
+        {% endif %}
+    </div>
+    <div class="col-sm-6 align-items-center d-flex justify-content-center column_center">
+        <div class="player">
+            <!-- name of music player -->
+            <div class="header">weMusic</div>
+
+            <!-- the album picture of this song -->
+            <div id="albumPic">
+                {% if album_Pic %}
+                {% else %}
+                <img src="{% static 'imgs/default-song-image.jpg' %}" alt="default album pic"
+                     style="width: 100%; height: 100%">
+                {% endif %}
+            </div>
+
+            <!-- the track info of current playing song -->
+            <div class="trackInfo">
+                <!-- name of current playing song -->
+                <div id="songName">New Song</div>
+                <!-- artist of current playing song -->
+                <div id="artist">Singer</div>
+                <!-- album name of current playing song -->
+            </div>
+
+            <!-- progress of current playing condition -->
+            <div id="progress"></div>
+
+            {% if owner %}
+            <!-- control part of this song player -->
+            <div class="controls">
+
+                <!-- click to control playing song -->
+                <div class="play">
+                    <p id="icon-play">▶</p>
+                </div>
+
+                <!-- redirect to the next song -->
+                <div class="next">
+                    <p id="icon-next">▶||</p>
+                </div>
+
+            </div>
+            {% endif %}
+
+            <!-- show the information of current playing time and total time -->
+            <div class="time">
+
+                <!-- current playing time -->
+                <div id="current">00:00</div>
+
+                <!-- total time -->
+                <div id="total">00:00</div>
+            </div>
+
+            <div id="comment-screen"></div>
+
+
+        </div>
+
+        <br>
+        <div class="slidecontainer">
+            <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+            <p id='demo'></p>
+        </div>
+        <br>
+        <div class="switch">
+            <span style="font-size: 20px">Off</span>
+            <label>
+                <input type="range" min="0" max="1" value="1" class="slider" style="width:40px; height: 10px" id="commentSwitch">
+            </label>
+            <span style="font-size: 20px">On</span>
+        </div>
+        <br>
+
+        <div class="comment">
+            <form class="form-inline">
+                <div class="form-group mx-3 mb-2">
+                    <input type="text" size="40" class="form-control" id="comment" placeholder="Comment" autocomplete="false">
+                </div>
+                <button type="button" class="btn btn-primary mb-2" id="sendComment">Send</button>
+            </form>
+        </div>
+    </div>
+    <div id="login" class="col-sm-3 align-items-center d-flex justify-content-center column_center">
+        <p style="font-size: 25px; font-weight: bold">Song List:</p>
+        <ul id="playlist">
+
+        </ul>
+    </div>
+</div>
+<!-- <script src="{% static '/js/slider.js' %}"></script> -->
+
+{% if owner %}
+<script src="{% static '/js/host_player.js' %}"></script>
+{% else %}
+<script src="{% static '/js/member_player.js' %}"></script>
+{% endif %}
+
+<script>
+    var room_key = '{{ room_key }}';
+    var playlist_id = '{{ playlist_id }}';
+    var access_token = '{{ access_token }}';
+    var host_access_token = '{{ host_access_token }}';
+
+    $(document).on("click", '#playlist_add', {token: access_token}, playlist_clicked);
+    $(document).on("click", '#get-all-members', {room_key: room_key}, get_all_members);
+    $(document).on("click", '#icon-play', {token: access_token, room_key: room_key}, pause_or_play);
+    $(document).on("click", '#icon-next', {token: access_token, room_key: room_key}, skip);
+    $(document).on("click", '#pin_song', {token: access_token, playlist_id: playlist_id}, pin_song);
+    $(document).on("click", '#like_song', {token: access_token, playlist_id: playlist_id}, like_song);
+    $(document).on("click", '#add_song', {
+        room_key: room_key,
+        playlist_id: playlist_id,
+        host_access_token: host_access_token
+    }, add_song);
+
+    // Load room list when open or refresh the page
+    loadRoomList(room_key, '{{ owner }}');
+
+    var slider = document.getElementById("myRange");
+        // Ready
+
+    slider.oninput = function () {
+        $.ajax({
+            url: "https://api.spotify.com/v1/me/player/volume?volume_percent=" + this.value,
+            type: "PUT",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + access_token);
+            }
+        })
+    };
+
+    var commentSwitch = document.getElementById("commentSwitch");
+    commentSwitch.oninput = function () {
+        var comment_display = document.getElementById("comment-screen");
+        if (this.value == 1) {
+            comment_display.style.display = "block";
+        } else {
+            comment_display.style.display = "none";
+        }
+    };
+
+    var socket = new WebSocket('ws://' + window.location.host + '/ws/room_key/' + room_key + '/');
+
+    socket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var type = data['type'];
+        switch (type) {
+            case '0':
+                send_comment(data['message'], data['message_id'], data['message_user']);
+                break;
+            case '1':
+                loadRoomList(room_key, '{{ owner }}');
+                break;
+            default:
+                console.log('the type of web socket is...' + type);
+        }
+    };
+
+    function add_song(event) {
+        var name = $(event.target).parent().parent().text();
+        artist = $(event.target).parent().parent().attr('artist');
+        refer_string = $(event.target).parent().parent().attr('refer_string');
+        album_img = $(event.target).parent().parent().attr('album_img');
+        $.post("/add_song/" + room_key + '/' + name + '/' + artist + '/' + refer_string + '/' + album_img.slice(24, album_img.length)).done(function () {
+            socket.send(JSON.stringify({
+                'update_songlist' : '1',
+            }))
+        });
+    }
+
+    function pin_song(event) {
+        song_index = $(event.target).parent().parent().attr('order');
+        $.post("/pin_song/" + room_key + '/' + parseInt(song_index)).done(function () {
+            socket.send(JSON.stringify({
+                'update_songlist': '1',
+            }))
+        });
+    }
+
+    function like_song(event) {
+        song_index = $(event.target).parent().parent().attr('order');
+        $.post("/like_song/" + room_key + '/' + parseInt(song_index)).done(function () {
+            socket.send(JSON.stringify({
+                'update_songlist': '1',
+            }))
+        });
+    }
+
+    $("#sendComment").click(function () {
+        var text = $("#comment").val();
+        $.post("/create_comment/" + text.toString() + "/" + '{{ room_key }}').done(function (data) {
+            var pos = 0;
+            for(var i = 0; i < data.length; i++){
+                if(!isNaN(parseInt(data.charAt(i)))){
+                    pos++;
+                }else if(data.charAt(i) == ','){
+                    break;
+                }
+            }
+            id = parseInt(data.substring(0, pos));
+            user = data.substring(pos+1, data.length);
+            socket.send(JSON.stringify({
+                'message': text,
+                'message_id': id,
+                'message_user': user
+            }));
+        });
+        $("#comment").val('');
+    });
+
+
+    socket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+</script>
+
+</body>
+</html>

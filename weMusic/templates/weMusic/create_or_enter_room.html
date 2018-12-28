@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create or enter room</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/weMusic/welcome.css">
+    {% load staticfiles %}
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+    <script src="{% static 'js/create_or_enter_room.js' %}"></script>
+</head>
+<body>
+
+<input type="hidden" id="username" value="{{ username }}">
+
+<div class="row h-100">
+    <div id="out">
+        <input type="hidden" name="lat"/>
+        <input type="hidden" name="long"/>
+    </div>
+    <div class="modal fade" id="createRoom" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Which room you want to create?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="create_room_form" method="post" action="{% url 'create_room' %}">
+                        <input type="radio" name="room_state_raw" value="public" checked>Public Room
+                        <input type="radio" name="room_state_raw" value="private">Private Room
+                        <br>
+                        <label for="room_name" class="col-form-label">Name of room:</label>
+                        <input id="room_name" type="text" class="form-control" name="room_name">
+                        <br>
+                        <label for="room_key" class="col-form-label">Create a 4-digit room key:</label>
+                        <input id="room_key" type="text" class="form-control" name="room_key">
+                        <br>
+                        <!--<button class="btn btn-primary" id="find_room">Create</button>-->
+                        <input id="find_room" value="Create" class="btn btn-primary"/>
+                        {% csrf_token %}
+                    </form>
+                    <p id="create_error_msg"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="enterRoom" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enter the room code</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="enter_room_key" type="text" name="room_key">
+                    <button id="enter_room_btn" class="btn btn-primary">Enter</button>
+                    <p id="enter_error_msg"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 align-items-center d-flex justify-content-center column_center">
+        <h1>Welcome to WeMusic!</h1>
+        <br>
+        <p>You and your friends can import playlist, vote for and play songs together in real-time.
+            <br>Create or enter a room with room code now!</p>
+        <br>
+        <br>
+        <div class="row w-50">
+            <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal"
+                    data-target="#createRoom">Create a room
+            </button>
+            <button class="btn btn-outline-primary btn-lg ml-auto" data-toggle="modal"
+                    data-target="#enterRoom">Enter a room
+            </button>
+        </div>
+        <br>
+    </div>
+
+</div>
+
+</body>
+</html>

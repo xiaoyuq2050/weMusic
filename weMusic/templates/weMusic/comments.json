@@ -1,0 +1,6 @@
+{
+  "max-time":"{{max_time|date:"c"}}",
+  "comments":[
+    {% for comment in comments %}{% include 'weMusic/comment.json' %}{% if not forloop.last %}, {% endif %}{%  endfor %}
+  ]
+}

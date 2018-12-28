@@ -1,0 +1,7 @@
+{
+  "id": {{song.id}},
+  "name":"{{song.name}}",
+  "refer_string":"{{song.refer_string}}",
+  "artist":"{{song.artist}}",
+  "album_img":"{{song.album_img}}"
+}

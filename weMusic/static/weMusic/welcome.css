@@ -1,0 +1,26 @@
+html, body {
+	height: 100%;
+}
+
+* {
+  margin: 0px;
+}
+
+body {
+background-image: url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full page/img(11).jpg");
+background-repeat: no-repeat;
+background-size: cover;
+background-position: center center;
+}
+
+.column_center {
+flex-direction: column;
+margin: 0px 0px 0px 0px;
+}
+
+#login {
+margin: 0px 0px 0px 0px;
+flex-direction: column;
+/*background: rgba(255,255,255, 0.5);*/
+    background: rgba(192, 192, 192, 0.5);
+}
